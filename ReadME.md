@@ -8,10 +8,18 @@ The core of the Application is a User Auth module and Organizations.
 
 Organization is a team with team members. Invites can be sent via Links which can be revoked.
 
+Permissions include freemium block checks as dependencies, an example is limiting the number of organizations a freemium user can have to 2.
+
+
+Admin right actions: Only Admin can perform such actions.
+Strict Member Actions.
+
+
+
 # Installation
 Click on use Template at the top righthand corner of the screen which would create a repository for you.
 
-After Cloning the repo we are done to usage.
+After Cloning the repo we are down to usage.
 
 ## Usage
 
@@ -26,9 +34,6 @@ Ps. All commands below are terminal commands.
 creating a virtualenv via venv
 ```
 python3 -m venv {name of your env}
-
-
-
 ```
 
 To activate your venv
