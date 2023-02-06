@@ -1,8 +1,11 @@
+# Token generation 3rd party generation
 from itsdangerous.exc import BadSignature
 from itsdangerous.url_safe import URLSafeSerializer, URLSafeTimedSerializer
 
+# application imports
 from src.app.config import auth_settings
 
+# Creating timed and untimed data serializers
 tokens = URLSafeSerializer(
     f"{auth_settings.access_secret_key}+{auth_settings.refresh_secret_key}"
 )

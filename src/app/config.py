@@ -2,6 +2,12 @@ from src.app.utils.schemas_utils import AbstractSettings, EmailStr
 
 
 class DBSettings(AbstractSettings):
+    """Database Settings
+
+    Args:
+        AbstractSettings (_type_): inherits Core settings.
+    """
+
     name: str
     username: str
     password: str
@@ -10,6 +16,12 @@ class DBSettings(AbstractSettings):
 
 
 class AuthSettings(AbstractSettings):
+    """Authentication Settings
+
+    Args:
+        AbstractSettings (_type_): inherits Core settings.
+    """
+
     access_secret_key: str
     refresh_secret_key: str
     access_time_exp: int
@@ -19,6 +31,12 @@ class AuthSettings(AbstractSettings):
 
 
 class MailSettings(AbstractSettings):
+    """Mail Settings
+
+    Args:
+        AbstractSettings (_type_): inherits Core settings.
+    """
+
     mail_username: str
     mail_password: str
     mail_from: EmailStr
