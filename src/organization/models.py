@@ -1,10 +1,13 @@
+# 3rd party imports
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, text
 from sqlalchemy.orm import relationship
 
+# Application import
 from src.app.utils.models_utils import AbstractModel
 from src.auth.models import User
 
 
+# Organization Table.
 class Organization(AbstractModel):
     __tablename__ = "organization"
     name = Column(String, nullable=False)
@@ -17,6 +20,7 @@ class Organization(AbstractModel):
     org_member = relationship("OrgMember", back_populates="org")
 
 
+# Organization Member Table.
 class OrgMember(AbstractModel):
     __tablename__ = "organization_member"
     org_id = Column(
