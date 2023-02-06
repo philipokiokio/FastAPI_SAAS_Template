@@ -1,10 +1,13 @@
+# 3rd party imports
 from sqlalchemy import Boolean, Column, ForeignKey, String, text
 from sqlalchemy.orm import relationship
 
+# application imports
 from src.app.utils.models_utils import AbstractModel
 
 
 class User(AbstractModel):
+    # User Table
     __tablename__ = "users"
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
@@ -15,6 +18,7 @@ class User(AbstractModel):
 
 
 class RefreshToken(AbstractModel):
+    # Refresh Token Table
     __tablename__ = "user_refresh_token"
     user_id = Column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     token = Column(String, nullable=False)

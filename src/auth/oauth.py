@@ -1,17 +1,23 @@
+# python import
 from datetime import datetime, timedelta
 
+# framework imports
 from fastapi import Depends, Header, HTTPException, status
 from fastapi.security.oauth2 import OAuth2PasswordBearer
-from jose import JWTError, jwt
-from sqlalchemy.orm import Session
 
+# JWT imports
+from jose import JWTError, jwt
+
+# Apoplication imports
 from src.app.config import auth_settings
 from src.auth.auth_repository import token_repo, user_repo
 from src.auth.schemas import TokenData
 
+# OAUTH Login Endpoint
 oauth_schemes = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login/")
 
 
+# AUTH SECRETS AND TIME LIMITS
 access_secret_key = auth_settings.access_secret_key
 refresh_secret_key = auth_settings.refresh_secret_key
 access_time_exp = auth_settings.access_time_exp
@@ -20,6 +26,7 @@ Algorithm = auth_settings.algorithm
 
 
 def create_access_token(data: dict) -> str:
+    # Create Access Token
     to_encode = data.copy()
     expire = datetime.now() + timedelta(minutes=access_time_exp)
     to_encode["exp"] = expire
@@ -28,6 +35,7 @@ def create_access_token(data: dict) -> str:
 
 
 def create_refresh_token(data: dict) -> str:
+    # Create Refresh Token
     to_encode = data.copy()
     expire = datetime.now() + timedelta(minutes=refresh_time_exp)
     to_encode["exp"] = expire
@@ -36,6 +44,7 @@ def create_refresh_token(data: dict) -> str:
 
 
 def credential_exception():
+    # Throw Auth Exception
     raise HTTPException(
         detail="Could not validate credentials",
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -44,6 +53,8 @@ def credential_exception():
 
 
 def refresh_exception():
+    # Throw Refresh Exception
+
     raise HTTPException(
         detail="Could not validate refresh credential",
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -52,6 +63,7 @@ def refresh_exception():
 
 
 def verify_refresh_token(refresh_tok: str = Header()) -> str:
+    # Verify Refresh Token
     try:
         decoded_data = jwt.decode(refresh_tok, refresh_secret_key, algorithms=Algorithm)
         email = decoded_data.get("email")
@@ -73,6 +85,7 @@ def verify_refresh_token(refresh_tok: str = Header()) -> str:
 
 
 def get_current_user(token: str = Depends(oauth_schemes)):
+    # Verify Access token and return User
     try:
         decode_data = jwt.decode(token, access_secret_key, algorithms=Algorithm)
         email = decode_data.get("email")
