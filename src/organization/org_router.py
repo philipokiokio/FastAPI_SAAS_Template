@@ -1,12 +1,14 @@
+# framework import
 from fastapi import APIRouter, Depends, status
-from starlette.requests import Request
 
+# application imports
 from src.auth.models import User
 from src.auth.oauth import get_current_user
 from src.organization import schemas
 from src.organization.org_service import org_service
 from src.organization.pipes import org_dep
 
+# org router
 org_router = APIRouter(prefix="/api/v1/org", tags={"Organization and Org Members"})
 
 
@@ -19,6 +21,15 @@ def create_org(
     create_workspace: schemas.OrgCreate,
     current_user: User = Depends(org_dep.premium_ulimited_orgs),
 ):
+    """Create Org
+
+    Args:
+        create_workspace (schemas.OrgCreate): data
+        current_user (User, optional): _description_. Defaults to Depends(org_dep.premium_ulimited_orgs): Premium check.
+
+    Returns:
+        _type_: Resp
+    """
     resp = org_service.create_org(current_user.id, create_workspace)
 
     return resp
@@ -30,6 +41,14 @@ def create_org(
     response_model=schemas.MessageListOrgResp,
 )
 def get_orgs(current_user: User = Depends(get_current_user)):
+    """Get Orgs
+
+    Args:
+        current_user (User, optional): _description_. Defaults to Depends(get_current_user): Logged in User.
+
+    Returns:
+        _type_: resp
+    """
     resp = org_service.get_user_org(current_user.id)
 
     return resp
@@ -41,6 +60,15 @@ def get_orgs(current_user: User = Depends(get_current_user)):
     response_model=schemas.MessageOrgResp,
 )
 def get_org(org_slug: str, current_user: User = Depends(org_dep.member_dep)):
+    """Get Org
+
+    Args:
+        org_slug (str): slug
+        current_user (User, optional): _description_. Defaults to Depends(org_dep.member_dep): Logged in Org Member
+
+    Returns:
+        _type_: resp
+    """
     resp = org_service.get_org(org_slug)
 
     return resp
@@ -56,6 +84,16 @@ def org_update(
     update_org: schemas.OrgUpdate,
     current_user: User = Depends(org_dep.admin_rights_dep),
 ):
+    """Org Update
+
+    Args:
+        org_slug (str): Slug
+        update_org (schemas.OrgUpdate): Data
+        current_user (User, optional): _description_. Defaults to Depends(org_dep.admin_rights_dep): Loggeed inn userr with write access.
+
+    Returns:
+        _type_: resp
+    """
     resp = org_service.update_org(org_slug, update_org)
 
     return resp
@@ -66,6 +104,15 @@ def org_update(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 def org_delete(org_slug: str, current_user: User = Depends(org_dep.admin_rights_dep)):
+    """Delete Organization
+
+    Args:
+        org_slug (str): Slug
+        current_user (User, optional): _description_. Defaults to Depends(org_dep.admin_rights_dep)= Write access.
+
+    Returns:
+        _type_: 204
+    """
     org_service.delete_org(org_slug)
 
     return {"status": status.HTTP_204_NO_CONTENT}
@@ -81,6 +128,16 @@ def generate_org_invite_link(
     role_data: schemas.UpdateOrgMember,
     current_user: User = Depends(org_dep.admin_rights_dep),
 ):
+    """GENERATE ORG LINK
+
+    Args:
+        org_slug (str): str
+        role_data (schemas.UpdateOrgMember): role information
+        current_user (User, optional): _description_. Defaults to Depends(org_dep.admin_rights_dep).
+
+    Returns:
+        _type_: resp
+    """
     resp = org_service.org_link_invite(org_slug, role_data.role)
 
     return resp
@@ -91,9 +148,16 @@ def generate_org_invite_link(
     status_code=status.HTTP_200_OK,
     response_model=schemas.MessageOrgResp,
 )
-def revoke_workspace(
-    org_slug: str, current_user: User = Depends(org_dep.admin_rights_dep)
-):
+def revoke_org(org_slug: str, current_user: User = Depends(org_dep.admin_rights_dep)):
+    """Revoke Org Access
+
+    Args:
+        org_slug (str): slug
+        current_user (User, optional): _description_. Defaults to Depends(org_dep.admin_rights_dep): Logged in user with right access.
+
+    Returns:
+        _type_: resp
+    """
     resp = org_service.revoke_org_link(org_slug)
     return resp
 
@@ -104,6 +168,16 @@ def revoke_workspace(
     response_model=schemas.MessageOrgMembResp,
 )
 def org_member_join(token: str, role_token: str, new_org_member: schemas.JoinOrg):
+    """Join Org
+
+    Args:
+        token (str): str
+        role_token (str): role token
+        new_org_member (schemas.JoinOrg): data
+
+    Returns:
+        _type_: resp
+    """
     resp = org_service.join_org(token, role_token, new_org_member)
 
     return resp
@@ -115,8 +189,18 @@ def org_member_join(token: str, role_token: str, new_org_member: schemas.JoinOrg
     response_model=schemas.MessageOrgMembResp,
 )
 def get_org_member(
-    org_slug: str, member_id: int, current_user: User = Depends(get_current_user)
+    org_slug: str, member_id: int, current_user: User = Depends(org_dep.member_dep)
 ):
+    """Get Org  Member
+
+    Args:
+        org_slug (str): Slug
+        member_id (int): Member id
+        current_user (User, optional): _description_. Defaults to Depends(get_current_user): Logged in User a member of Org.
+
+    Returns:
+        _type_: resp
+    """
     resp = org_service.get_org_member(member_id, org_slug)
 
     return resp
@@ -127,7 +211,16 @@ def get_org_member(
     status_code=status.HTTP_200_OK,
     response_model=schemas.MessageListOrgMemResp,
 )
-def get_org_members(org_slug: str, current_user: User = Depends(get_current_user)):
+def get_org_members(org_slug: str, current_user: User = Depends(org_dep.member_dep)):
+    """Get All ORg Members
+
+    Args:
+        org_slug (str): slug
+        current_user (User, optional): _description_. Defaults to Depends(org_dep.member_dep): Logged in Member of Org.
+
+    Returns:
+        _type_: Resp
+    """
     resp = org_service.get_all_org_member(org_slug)
 
     return resp
@@ -144,6 +237,17 @@ def update_org_member(
     update_org_member: schemas.UpdateOrgMember,
     current_user: User = Depends(org_dep.admin_rights_dep),
 ):
+    """_summary_
+
+    Args:
+        org_slug (str): slug
+        member_id (int): member id
+        update_org_member (schemas.UpdateOrgMember): role data
+        current_user (User, optional): _description_. Defaults to Depends(org_dep.admin_rights_dep).
+
+    Returns:
+        _type_: resp
+    """
     resp = org_service.update_org_member(org_slug, member_id, update_org_member)
 
     return resp
@@ -158,6 +262,16 @@ def delete_workspace_member(
     member_id: int,
     current_user: User = Depends(org_dep.admin_rights_dep),
 ):
+    """Remove from Organization
+
+    Args:
+        org_slug (str): Slug
+        member_id (int): Member id
+        current_user (User, optional): _description_. Defaults to Depends(org_dep.admin_rights_dep): Logged in User with right permissions.
+
+    Returns:
+        _type_: 204
+    """
     org_service.delete_org_member(org_slug, member_id)
 
     return {"status": status.HTTP_204_NO_CONTENT}
@@ -169,6 +283,15 @@ def delete_workspace_member(
     response_model=schemas.ResponseModel,
 )
 def leave_workspace(org_slug: str, current_user: User = Depends(org_dep.member_dep)):
+    """Leave a Workspace
+
+    Args:
+        org_slug (str): org slug
+        current_user (User, optional): _description_. Defaults to Depends(org_dep.member_dep)= Logged in User with the right permission.
+
+    Returns:
+        _type_: _description_
+    """
     org_service.leave_org(org_slug, current_user)
 
     return {"status": status.HTTP_200_OK, "message": "Logged In User left Orgnizaton."}

@@ -71,8 +71,7 @@ uvicorn src.app.main:app --reload
 ## Contributing
 There are few things that need to be worked on, they are 
 
-1. Documentation of the application via comments and docstrings.
-2. Testing: I will be writting a comprehensive overwhelmingly encompassing test case which will cover every case especially edge cases. I would love to learn to write good test so I am willing to partner with engineers on this.
+1. Testing: I will be writting a comprehensive overwhelmingly encompassing test case which will cover every case especially edge cases. I would love to learn to write good test so I am willing to partner with engineers on this.
 
 
 
