@@ -1,8 +1,10 @@
 # 3rd party imports
 from sqlalchemy.orm import Session
 
+from src.app.config import test_status
+
 # application import
-from src.app.database import SessionLocal
+from src.app.database import SessionLocal, get_test_db
 
 
 class BaseRepo:
@@ -13,7 +15,15 @@ class BaseRepo:
     """
 
     def __init__(self):
-        self.db: Session = self.get_sess.__next__()
+        self.db: Session = self.__testing_module__
+
+    @property
+    def __testing_module__(self):
+        db_sess = self.get_sess.__next__()
+        print(test_status)
+        if test_status is True:
+            db_sess = get_test_db().__next__()
+        return db_sess
 
     @property
     def get_sess(self):
@@ -23,7 +33,9 @@ class BaseRepo:
             _type_: DB Session.
         Handles exception via rollback and closes connection upon DB tranzaction completed
         """
+
         db_sess: Session = SessionLocal()
+
         try:
             yield db_sess
 

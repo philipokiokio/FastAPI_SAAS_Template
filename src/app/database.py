@@ -1,6 +1,5 @@
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import declarative_base, sessionmaker
 
 # application import config.
 from src.app.config import db_settings
@@ -18,3 +17,20 @@ print("Database is Ready!")
 
 # Domain Modelling Dependency
 Base = declarative_base()
+
+
+TEST_SQLALCHEMY_DATABASE_URL = SQLALCHEMY_DATABASE_URL + "_test"
+test_engine = create_engine(TEST_SQLALCHEMY_DATABASE_URL)
+TestSessionLocal = sessionmaker(autoflush=False, autocommit=False, bind=test_engine)
+
+
+def get_test_db():
+    print("Test Database is Ready!")
+
+    test_db = TestSessionLocal()
+    try:
+        yield test_db
+    except:
+        test_db.rollback()
+    finally:
+        test_db.close()

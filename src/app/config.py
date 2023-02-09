@@ -1,4 +1,6 @@
-from src.app.utils.schemas_utils import AbstractSettings, EmailStr
+from typing import Optional
+
+from src.app.utils.schemas_utils import AbstractSettings, BaseModel, EmailStr
 
 
 class DBSettings(AbstractSettings):
@@ -45,6 +47,10 @@ class MailSettings(AbstractSettings):
     mail_from_name: str
 
 
+data = False
+
+
 db_settings = DBSettings()
 auth_settings = AuthSettings()
 mail_settings = MailSettings()
+test_status = data

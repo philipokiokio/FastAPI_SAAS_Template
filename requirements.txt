@@ -2,6 +2,7 @@ aiosmtplib==2.0.1
 alembic==1.9.2
 amqp==5.1.1
 anyio==3.6.2
+attrs==22.2.0
 bcrypt==4.0.1
 billiard==3.6.4.0
 black==23.1.0
@@ -23,6 +24,7 @@ httpcore==0.16.3
 httptools==0.5.0
 httpx==0.23.3
 idna==3.4
+iniconfig==2.0.0
 itsdangerous==2.1.2
 Jinja2==3.1.2
 kombu==5.2.4
@@ -34,10 +36,12 @@ packaging==23.0
 passlib==1.7.4
 pathspec==0.11.0
 platformdirs==2.6.2
+pluggy==1.0.0
 prompt-toolkit==3.0.36
 psycopg2-binary==2.9.5
 pyasn1==0.4.8
 pydantic==1.10.4
+pytest==7.2.1
 python-dotenv==0.21.1
 python-jose==3.3.0
 python-multipart==0.0.5

@@ -2,7 +2,7 @@
 from typing import List
 
 # fastapi  imports
-from fastapi import FastAPI, status
+from fastapi import Depends, FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
 
 # application imports
