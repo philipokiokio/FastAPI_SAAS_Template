@@ -34,7 +34,7 @@ class BaseRepo:
         Handles exception via rollback and closes connection upon DB tranzaction completed
         """
 
-        db_sess: Session = SessionLocal()
+        db_sess = SessionLocal()
 
         try:
             yield db_sess
@@ -43,3 +43,4 @@ class BaseRepo:
             db_sess.rollback()
         finally:
             db_sess.close()
+            SessionLocal.remove()
