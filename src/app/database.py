@@ -28,11 +28,13 @@ TestSessionLocal = scoped_session(TestSessionLocal)
 def get_test_db():
     print("Test Database is Ready!")
 
-    test_db = TestSessionLocal()
     try:
+        test_db = TestSessionLocal()
+
         yield test_db
-    except:
-        test_db.rollback()
+    # except:
+    #     test_db.rollback()
     finally:
         test_db.close()
-        TestSessionLocal.remove()
+        print(True)
+    TestSessionLocal.remove()

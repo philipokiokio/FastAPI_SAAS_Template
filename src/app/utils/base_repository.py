@@ -20,8 +20,8 @@ class BaseRepo:
     @property
     def __testing_module__(self):
         db_sess = self.get_sess.__next__()
-        print(test_status)
-        if test_status is True:
+
+        if test_status.should_test is True:
             db_sess = get_test_db().__next__()
         return db_sess
 
@@ -43,4 +43,4 @@ class BaseRepo:
             db_sess.rollback()
         finally:
             db_sess.close()
-            SessionLocal.remove()
+        SessionLocal.remove()

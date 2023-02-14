@@ -29,7 +29,7 @@ async def register(user_create: schemas.user_create):
     """
     new_user = await user_service.register(user_create)
     return {
-        "message": "Registration Sucessful",
+        "message": "Registration Successful",
         "data": new_user,
         "status": status.HTTP_201_CREATED,
     }

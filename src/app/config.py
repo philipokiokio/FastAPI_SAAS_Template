@@ -47,10 +47,11 @@ class MailSettings(AbstractSettings):
     mail_from_name: str
 
 
-data = False
+class TestSettings(AbstractSettings):
+    should_test: Optional[bool]
 
 
 db_settings = DBSettings()
 auth_settings = AuthSettings()
 mail_settings = MailSettings()
-test_status = data
+test_status = TestSettings()
