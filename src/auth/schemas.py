@@ -20,6 +20,7 @@ class user_create(AbstractModel):
     last_name: str
     email: EmailStr
     password: str
+    is_verified: bool = False
 
 
 # ORM response

@@ -18,7 +18,6 @@ class UserRepo(BaseRepo):
     def create(self, user_create: any) -> User:
         # create a new user
         new_user = User(**user_create.dict())
-        new_user.is_verified = False
         new_user.is_premium = False
         self.db.add(new_user)
         self.db.commit()

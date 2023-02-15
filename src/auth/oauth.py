@@ -67,6 +67,7 @@ def verify_refresh_token(refresh_tok: str = Header()) -> str:
     try:
         decoded_data = jwt.decode(refresh_tok, refresh_secret_key, algorithms=Algorithm)
         email = decoded_data.get("email")
+        print(email)
         if not email:
             raise refresh_exception()
         token_data = TokenData(email=email)
@@ -74,6 +75,7 @@ def verify_refresh_token(refresh_tok: str = Header()) -> str:
         raise refresh_exception()
 
     refresh_token_check = token_repo.get_token_by_tok(refresh_tok)
+    print(refresh_token_check)
 
     if not refresh_token_check:
         refresh_exception()
