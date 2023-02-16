@@ -71,6 +71,17 @@ def second_user(client):
     return new_user
 
 
+@pytest.fixture
+def first_user_login(client, first_user):
+    client: TestClient = client
+    res = client.post(
+        "/api/v1/auth/login/",
+        data={"username": first_user["email"], "password": first_user["password"]},
+    )
+    assert res.status_code == 200
+    return res.json().get("data")
+
+
 # Auth Clients for refresh and access token for the first user
 
 
