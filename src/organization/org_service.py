@@ -21,7 +21,7 @@ class OrgService:
 
     # orm call org
     def orm_call(self, org: Organization):
-        org_ = jsonable_encoder(org)
+        org_ = org.__dict__
         org_["creator"] = org.creator
         org_["members"] = org.org_member
         return org_
@@ -264,12 +264,12 @@ class OrgService:
         org_member = self.org_member_repo.create_org_member(org_member_data)
         # orm call
         org_member_ = self.member_orm_call(org_member)
-
         resp = {
             "message": "User Joined Org",
             "data": org_member_,
             "status": status.HTTP_201_CREATED,
         }
+
         return resp
 
     def get_org_member(self, id: int, org_slug: str) -> schemas.MessageOrgMembResp:

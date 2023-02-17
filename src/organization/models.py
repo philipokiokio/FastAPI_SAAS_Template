@@ -17,7 +17,9 @@ class Organization(AbstractModel):
     )
     revoke_link = Column(Boolean, server_default=text("false"))
     creator = relationship("User")
-    org_member = relationship("OrgMember", back_populates="org")
+    org_member = relationship(
+        "OrgMember", back_populates="org", cascade="all, delete-orphan"
+    )
 
 
 # Organization Member Table.

@@ -4,6 +4,7 @@ from fastapi.testclient import TestClient
 from src.app import main
 from src.app.config import test_status
 from src.app.database import Base, TestSessionLocal, test_engine
+from src.app.utils.token import gen_token
 from src.auth.oauth import create_access_token, create_refresh_token
 
 # Test SQLAlchemy DBURL
@@ -33,7 +34,7 @@ user_data = {
 
 
 first_user_data = {
-    "email": "test@gmail.com",
+    "email": "tester@gmail.com",
     "password": "anotherday",
     "first_name": "Philip",
     "last_name": "thebackend",
@@ -92,6 +93,12 @@ def first_user_access(first_user):
 
 
 @pytest.fixture
+def secnd_user_access(second_user):
+    access_token = create_access_token(second_user)
+    return access_token
+
+
+@pytest.fixture
 def first_user_refresh(first_user):
     data = {"email": first_user["email"]}
     refresh_token = create_refresh_token(data)
@@ -103,3 +110,44 @@ def first_auth_client(client, first_user_access):
     client: TestClient = client
     client.headers = {**client.headers, "Authorization": f"Bearer {first_user_access}"}
     return client
+
+
+@pytest.fixture
+def secnd_auth_client(client, secnd_user_access):
+    client: TestClient = client
+    client.headers = {**client.headers, "Authorization": f"Bearer {secnd_user_access}"}
+    return client
+
+
+first_org = {"name": "stripe"}
+second_org = {"name": "paystack"}
+
+
+@pytest.fixture
+def first_user_org_created(first_auth_client):
+    client: TestClient = first_auth_client
+
+    res = client.post("api/v1/org/create/", json=first_org)
+    return res.json()
+
+
+@pytest.fixture
+def first_user_2nd_org_created(first_auth_client, first_user_org_created):
+    client: TestClient = first_auth_client
+
+    res = client.post("api/v1/org/create/", json=second_org)
+    return res.json().get("data")
+
+
+@pytest.fixture
+def org_memb_2nd_join(first_user_2nd_org_created, client, secnd_user_access):
+    client: TestClient = client
+
+    token = gen_token(first_user_2nd_org_created["slug"])
+    role_token = gen_token("Member")
+    res = client.post(
+        "/api/v1/org/join/",
+        params={"token": token, "role_token": role_token},
+        json={"email": second_user_data["email"]},
+    )
+    return res.json().get("data")
