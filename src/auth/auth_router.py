@@ -8,7 +8,7 @@ from src.auth.auth_service import user_service
 from src.auth.oauth import get_current_user, verify_refresh_token
 
 # API Router
-user_router = APIRouter(prefix="/api/v1/auth", tags={"User Authentication"})
+user_router = APIRouter(prefix="/api/v1/auth", tags=["User Authentication"])
 
 
 @user_router.post(

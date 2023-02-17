@@ -9,7 +9,7 @@ from src.organization.org_service import org_service
 from src.organization.pipes import org_dep
 
 # org router
-org_router = APIRouter(prefix="/api/v1/org", tags={"Organization and Org Members"})
+org_router = APIRouter(prefix="/api/v1/org", tags=["Organization and Org Members"])
 
 
 @org_router.post(
