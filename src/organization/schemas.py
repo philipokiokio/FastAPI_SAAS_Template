@@ -1,5 +1,5 @@
 # python imports
-from typing import List, Optional
+from typing import List, Optional, Union
 
 # 3rd party imports
 from pydantic import EmailStr
@@ -25,7 +25,7 @@ class OrgResponse(OrgCreate):
     slug: str
     revoke_link: Optional[bool]
     creator: User
-    members: List[OrgMember] | None
+    members: Union[List[OrgMember], None]
 
 
 # Org Response DTO

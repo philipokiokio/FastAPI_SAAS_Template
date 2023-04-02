@@ -23,7 +23,6 @@ class BaseRepo:
 
         if test_status.should_test is True:
             return get_test_db().__next__()
-        print("Database is Ready!")
 
         return db_sess
 
