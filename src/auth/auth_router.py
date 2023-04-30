@@ -6,6 +6,8 @@ from fastapi.security.oauth2 import OAuth2PasswordRequestForm
 from src.auth import schemas
 from src.auth.auth_service import user_service
 from src.auth.oauth import get_current_user, verify_refresh_token
+from sqlalchemy.orm import Session
+from src.app.utils.db_utils import get_db
 
 # API Router
 user_router = APIRouter(prefix="/api/v1/auth", tags=["User Authentication"])
@@ -16,7 +18,7 @@ user_router = APIRouter(prefix="/api/v1/auth", tags=["User Authentication"])
     status_code=status.HTTP_201_CREATED,
     response_model=schemas.MessageUserResponse,
 )
-async def register(user_create: schemas.user_create):
+async def register(user_create: schemas.user_create, db:Session = Depends(get_db)):
     """Registration of User
 
     Args:
@@ -27,7 +29,7 @@ async def register(user_create: schemas.user_create):
     Returns:
         _type_: response
     """
-    new_user = await user_service.register(user_create)
+    new_user = await user_service(db).register(user_create)
     return {
         "message": "Registration Successful",
         "data": new_user,
@@ -40,7 +42,7 @@ async def register(user_create: schemas.user_create):
     status_code=status.HTTP_200_OK,
     response_model=schemas.MessageLoginResponse,
 )
-def login(login_user: OAuth2PasswordRequestForm = Depends()):
+def login(login_user: OAuth2PasswordRequestForm = Depends(),db:Session = Depends(get_db)):
     """Login
 
     Args:
@@ -49,7 +51,7 @@ def login(login_user: OAuth2PasswordRequestForm = Depends()):
     Returns:
         _type_: user
     """
-    user_login = user_service.login(login_user)
+    user_login = user_service(db).login(login_user)
     return user_login
 
 
@@ -74,7 +76,7 @@ def logged_in_user(current_user: dict = Depends(get_current_user)):
     response_model=schemas.MessageUserResponse,
 )
 def update_user(
-    update_user: schemas.UserUpdate, current_user: dict = Depends(get_current_user)
+    update_user: schemas.UserUpdate, current_user: dict = Depends(get_current_user),db:Session = Depends(get_db)
 ):
     """Update User
 
@@ -85,7 +87,7 @@ def update_user(
     Returns:
         _type_: resp
     """
-    update_user = user_service.update_user(update_user, current_user)
+    update_user = user_service(db).update_user(update_user, current_user)
 
     return {
         "message": "User Updated Successfully",
@@ -95,7 +97,7 @@ def update_user(
 
 
 @user_router.delete("/delete/", status_code=status.HTTP_204_NO_CONTENT)
-def delete_user(current_user: dict = Depends(get_current_user)):
+def delete_user(current_user: dict = Depends(get_current_user),db:Session = Depends(get_db)):
     """Delete User
 
     Args:
@@ -104,7 +106,7 @@ def delete_user(current_user: dict = Depends(get_current_user)):
     Returns:
         _type_: 204
     """
-    user_service.delete(current_user)
+    user_service(db).delete(current_user)
     return {"status": status.HTTP_204_NO_CONTENT}
 
 
@@ -133,6 +135,7 @@ def get_new_token(new_access_token: str = Depends(verify_refresh_token)):
 def change_password(
     password_data: schemas.ChangePassword,
     current_user: dict = Depends(get_current_user),
+    db:Session = Depends(get_db)    
 ):
     """Change Password
 
@@ -143,12 +146,12 @@ def change_password(
     Returns:
         _type_: response
     """
-    resp = user_service.change_password(current_user, password_data)
+    resp = user_service(db).change_password(current_user, password_data)
     return resp
 
 
 @user_router.post("/password-reset/complete/{token}/", status_code=status.HTTP_200_OK)
-def password_reset_complete(token: str, password_data: schemas.PasswordData):
+def password_reset_complete(token: str, password_data: schemas.PasswordData,db:Session = Depends(get_db)):
     """Password Reset
 
     Args:
@@ -158,12 +161,12 @@ def password_reset_complete(token: str, password_data: schemas.PasswordData):
     Returns:
         _type_: resp
     """
-    resp = user_service.password_reset_complete(token, password_data)
+    resp = user_service(db).password_reset_complete(token, password_data)
     return resp
 
 
 @user_router.post("/reset-password/", status_code=status.HTTP_200_OK)
-async def reset_password(password_data: schemas.TokenData):
+async def reset_password(password_data: schemas.TokenData,db:Session = Depends(get_db)):
     """Reset Password
 
     Args:
@@ -172,12 +175,12 @@ async def reset_password(password_data: schemas.TokenData):
     Returns:
         _type_: response
     """
-    resp = await user_service.password_reset(password_data.email)
+    resp = await user_service(db).password_reset(password_data.email)
     return resp
 
 
 @user_router.post("/resend-account-verification/", status_code=status.HTTP_200_OK)
-async def resend_account_verification(email_data: schemas.TokenData):
+async def resend_account_verification(email_data: schemas.TokenData,db:Session = Depends(get_db)):
     """Resend Account Verification
 
     Args:
@@ -186,12 +189,12 @@ async def resend_account_verification(email_data: schemas.TokenData):
     Returns:
         _type_: resp
     """
-    resp = await user_service.resend_verification_token(email_data.email)
+    resp = await user_service(db).resend_verification_token(email_data.email)
     return resp
 
 
 @user_router.post("/account-verification/{token}/", status_code=status.HTTP_200_OK)
-async def account_verification(token: str):
+async def account_verification(token: str,db:Session = Depends(get_db)):
     """Account Verification
 
     Args:
@@ -200,5 +203,5 @@ async def account_verification(token: str):
     Returns:
         _type_: response
     """
-    resp = user_service.account_verification_complete(token)
+    resp = user_service(db).account_verification_complete(token)
     return resp

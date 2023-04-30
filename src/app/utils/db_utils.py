@@ -1,5 +1,5 @@
 from passlib.context import CryptContext
-
+from src.app.database import SessionFactory
 # Password Hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -27,3 +27,16 @@ def hash_password(password: str) -> str:
         str: Hashed string
     """
     return pwd_context.hash(password)
+
+
+
+def get_db():
+    db = SessionFactory()
+
+    try:
+        yield db
+    except: 
+        db.rollback()
+        
+    finally:
+        db.close()

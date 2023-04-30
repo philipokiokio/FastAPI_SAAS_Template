@@ -2,11 +2,13 @@
 from pydantic import EmailStr
 
 # application import
-from src.app.utils.base_repository import BaseRepo
 from src.auth.models import RefreshToken, User
+from sqlalchemy.orm import Session
 
 
-class UserRepo(BaseRepo):
+class UserRepo:
+    def __init__(self,db:Session) -> None:
+        self.db = db
     def base_query(self):
         # Base Query for DB calls
         return self.db.query(User)
@@ -44,7 +46,11 @@ class UserRepo(BaseRepo):
         return updated_user
 
 
-class TokenRepo(BaseRepo):
+class TokenRepo:
+
+    def __init__(self, db:Session) -> None:
+        self.db = db
+
     def base_query(self):
         # base query for refresh token
         return self.db.query(RefreshToken)
@@ -75,5 +81,5 @@ class TokenRepo(BaseRepo):
 
 # Instatiating the Classes.
 
-user_repo = UserRepo()
-token_repo = TokenRepo()
+user_repo = UserRepo
+token_repo = TokenRepo

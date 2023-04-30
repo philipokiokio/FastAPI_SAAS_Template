@@ -3,26 +3,48 @@ from fastapi.testclient import TestClient
 
 from src.app import main
 from src.app.config import test_status
-from src.app.database import Base, TestSessionLocal, test_engine
+from src.app.database import Base, test_engine,TestFactory
 from src.app.utils.token import gen_token
 from src.auth.oauth import create_access_token, create_refresh_token
+from src.app.utils.db_utils import get_db
 
 # Test SQLAlchemy DBURL
 
-
 @pytest.fixture
-def table_control():
+def session():
     Base.metadata.drop_all(test_engine)
     Base.metadata.create_all(test_engine)
 
 
-@pytest.fixture
-def client(table_control):
-    try:
-        yield TestClient(main.app)
-    finally:
-        TestSessionLocal.close()
 
+
+
+
+    db = TestFactory()
+    try:
+
+        yield db
+    finally:
+        db.close()
+
+
+@pytest.fixture()
+def client(session):
+
+    # run our code beforewe  run our test
+    def get_test_db():
+        try:
+
+            yield session
+        finally:
+            session.close()
+
+    main.app.dependency_overrides[get_db] = get_test_db
+    yield TestClient(main.app)
+
+
+
+  
 
 user_data = {
     "email": "test@gmail.com",

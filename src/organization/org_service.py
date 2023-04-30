@@ -14,10 +14,11 @@ from src.organization.org_repository import org_member_repo, org_repo
 
 
 class OrgService:
-    def __init__(self):
+    def __init__(self,db):
         # intializing repository
-        self.org_repo = org_repo
-        self.org_member_repo = org_member_repo
+        self.db = db
+        self.org_repo = org_repo(self.db)
+        self.org_member_repo = org_member_repo(self.db)
 
     # orm call org
     def orm_call(self, org: Organization):
@@ -241,7 +242,7 @@ class OrgService:
                 status_code=status.HTTP_400_BAD_REQUEST,
             )
         # check if invited email belongs to a user
-        user_check = user_repo.get_user(join_workspace.email)
+        user_check = user_repo(self.db).get_user(join_workspace.email)
         # raise Exception if no User
         if not user_check:
             raise HTTPException(
@@ -356,4 +357,4 @@ class OrgService:
         self.org_member_repo.delete_org_member(org_member)
 
 
-org_service = OrgService()
+org_service = OrgService

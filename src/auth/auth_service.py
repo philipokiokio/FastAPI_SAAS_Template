@@ -18,10 +18,11 @@ from src.auth.oauth import (
 
 
 class UserService:
-    def __init__(self):
+    def __init__(self, db):
         # Initializing Repositories
-        self.user_repo = user_repo
-        self.token_repo = token_repo
+        self.db =  db
+        self.user_repo = user_repo(self.db)
+        self.token_repo = token_repo(self.db)
 
     async def register(self, user: schemas.user_create) -> User:
         # checking if user exists.
@@ -42,7 +43,7 @@ class UserService:
         # mail data inserted in to the  template
         mail_data = {
             "first_name": new_user.first_name,
-            "url": f"{auth_settings.frontend_url}/auth/verification/{token}/",
+            "url": f"{auth_settings.frontend_url}auth/verification/{token}/",
         }
         # mail title
         mail_title = "Verify your Account"
@@ -72,8 +73,9 @@ class UserService:
                 status_code=status.HTTP_401_UNAUTHORIZED,
             )
         # create Access and Refresh Token
-        access_token = create_access_token(jsonable_encoder(user_check))
-        refresh_token = create_refresh_token(jsonable_encoder(user_check))
+        tokenizer= {"id": user_check.id, "email": user_check.email}
+        access_token = create_access_token(tokenizer)
+        refresh_token = create_refresh_token(tokenizer)
         # check if there is a previously existing refresh token
         token_check = self.token_repo.get_token(user_check.id)
         # if token update token column
@@ -255,4 +257,4 @@ class UserService:
 
 
 # Instanting the UserService class
-user_service = UserService()
+user_service = UserService

@@ -1,11 +1,13 @@
 # application imports
 
-from src.app.utils.base_repository import BaseRepo
 from src.organization.models import Organization, OrgMember
+from sqlalchemy.orm import Session
 
-
-class OrgRepo(BaseRepo):
+class OrgRepo():
     # org base query
+
+    def __init__(self, db:Session ) -> None:
+        self.db = db
     def base_query(self):
         return self.db.query(Organization)
 
@@ -63,7 +65,10 @@ class OrgRepo(BaseRepo):
         self.db.commit()
 
 
-class OrgMemberRepo(BaseRepo):
+class OrgMemberRepo():
+
+    def __init__(self, db:Session) -> None:
+        self.db = db
     # base query
     def base_query(self):
         return self.db.query(OrgMember)
@@ -120,5 +125,5 @@ class OrgMemberRepo(BaseRepo):
         self.db.commit()
 
 
-org_repo = OrgRepo()
-org_member_repo = OrgMemberRepo()
+org_repo = OrgRepo
+org_member_repo = OrgMemberRepo

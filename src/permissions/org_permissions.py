@@ -8,10 +8,11 @@ from src.organization.org_repository import Organization, org_member_repo, org_r
 
 
 class OrgPerms:
-    def __init__(self) -> None:
+    def __init__(self, db) -> None:
         # intializing organization repos
-        self.repo = org_repo
-        self.member_repo = org_member_repo
+        self.db =db
+        self.repo = org_repo(self.db)
+        self.member_repo = org_member_repo(self.db)
 
     # check if an Organization Exists
     def org_check(self, org_slug: str):
@@ -45,4 +46,4 @@ class OrgPerms:
 
 
 # instantiaion OrgPerms
-org_perms = OrgPerms()
+org_perms = OrgPerms
