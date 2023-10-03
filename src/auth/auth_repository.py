@@ -7,15 +7,16 @@ from sqlalchemy.orm import Session
 
 
 class UserRepo:
-    def __init__(self,db:Session) -> None:
+    def __init__(self, db: Session) -> None:
         self.db = db
+
     def base_query(self):
         # Base Query for DB calls
         return self.db.query(User)
 
     def get_user(self, email: EmailStr):
         # get user by email
-        return self.base_query().filter(User.email == email).first()
+        return self.base_query().filter(User.email.icontains(email)).first()
 
     def create(self, user_create: any) -> User:
         # create a new user
@@ -47,8 +48,7 @@ class UserRepo:
 
 
 class TokenRepo:
-
-    def __init__(self, db:Session) -> None:
+    def __init__(self, db: Session) -> None:
         self.db = db
 
     def base_query(self):
